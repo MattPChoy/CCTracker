@@ -16,16 +16,21 @@ const alreadyIn = ref(!!getToken());
 // Public leaderboard — the first thing everyone sees.
 const lb = ref<Leaderboard | null>(null);
 const window = ref("7d");
+const metric = ref("total_tokens");
 const WINDOWS = [
   { v: "today", label: "Today" },
   { v: "7d", label: "7 days" },
   { v: "30d", label: "30 days" },
   { v: "all_time", label: "All time" },
 ];
+const METRICS = [
+  { v: "total_tokens", label: "Tokens" },
+  { v: "cost_usd", label: "Cost 💸" },
+];
 
 async function loadPublic() {
   try {
-    lb.value = await api.publicLeaderboard("total_tokens", window.value);
+    lb.value = await api.publicLeaderboard(metric.value, window.value);
   } catch (e: any) {
     err.value = e.message;
   }
@@ -33,6 +38,11 @@ async function loadPublic() {
 
 function setWindow(w: string) {
   window.value = w;
+  loadPublic();
+}
+
+function setMetric(m: string) {
+  metric.value = m;
   loadPublic();
 }
 
@@ -84,19 +94,30 @@ onMounted(loadPublic);
 
   <!-- Public leaderboard: first thing you see -->
   <div class="card">
-    <div class="row" style="justify-content:space-between;align-items:center">
+    <div class="row" style="justify-content:space-between;align-items:center;gap:8px">
       <h1 style="margin:0">🏆 Global leaderboard</h1>
-      <div class="ostabs">
-        <button
-          v-for="w in WINDOWS"
-          :key="w.v"
-          :class="{ active: window === w.v }"
-          @click="setWindow(w.v)"
-        >{{ w.label }}</button>
+      <div class="row" style="gap:8px">
+        <div class="ostabs">
+          <button
+            v-for="m in METRICS"
+            :key="m.v"
+            :class="{ active: metric === m.v }"
+            @click="setMetric(m.v)"
+          >{{ m.label }}</button>
+        </div>
+        <div class="ostabs">
+          <button
+            v-for="w in WINDOWS"
+            :key="w.v"
+            :class="{ active: window === w.v }"
+            @click="setWindow(w.v)"
+          >{{ w.label }}</button>
+        </div>
       </div>
     </div>
     <p class="muted" style="margin-top:4px">
-      Everyone pushing usage, ranked by total tokens. Cost stays private.
+      Everyone pushing usage, ranked by {{ metric === "cost_usd" ? "cold hard spend 💸" : "total tokens" }}.
+      Flip to see who's burning the most.
     </p>
     <template v-if="lb && lb.entries.length">
       <LeaderboardTable :entries="lb.entries" :metric="lb.metric" />
