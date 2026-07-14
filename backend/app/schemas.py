@@ -9,14 +9,18 @@ from pydantic import BaseModel, Field
 
 # --- users / auth ---------------------------------------------------------
 class RegisterIn(BaseModel):
-    handle: str = Field(min_length=2, max_length=40, pattern=r"^[A-Za-z0-9_.-]+$")
-    display_name: str | None = None
+    # Optional: when omitted the server auto-generates a friendly handle so the
+    # user never has to invent (or copy) anything to get started.
+    handle: str | None = Field(default=None, min_length=2, max_length=40, pattern=r"^[A-Za-z0-9_.-]+$")
     email: str | None = None
+
+
+class MePatchIn(BaseModel):
+    handle: str = Field(min_length=2, max_length=40, pattern=r"^[A-Za-z0-9_.-]+$")
 
 
 class RegisterOut(BaseModel):
     handle: str
-    display_name: str | None
     token: str  # shown exactly once
     prefix: str
 
@@ -31,12 +35,10 @@ class MembershipOut(BaseModel):
     slug: str
     name: str
     role: str
-    alias: str | None
 
 
 class MeOut(BaseModel):
     handle: str
-    display_name: str | None
     memberships: list[MembershipOut]
 
 
@@ -63,7 +65,6 @@ class BoardOut(BaseModel):
 
 class BoardJoinIn(BaseModel):
     invite_code: str
-    alias: str | None = None
 
 
 class BoardPatchIn(BaseModel):
@@ -110,14 +111,14 @@ class PerModel(BaseModel):
 class LeaderboardEntry(BaseModel):
     rank: int
     handle: str
-    alias: str | None
     value: float
     cost_usd: float | None
     per_model: list[PerModel]
 
 
 class LeaderboardOut(BaseModel):
-    board: BoardOut
+    # board is present for a board leaderboard, omitted for the public one.
+    board: BoardOut | None = None
     metric: str
     window: str
     entries: list[LeaderboardEntry]

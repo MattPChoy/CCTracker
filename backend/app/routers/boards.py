@@ -63,7 +63,7 @@ def create_board(
     )
     session.add(board)
     session.flush()
-    session.add(BoardMember(board_id=board.id, user_id=user.id, alias=user.display_name, role="owner"))
+    session.add(BoardMember(board_id=board.id, user_id=user.id, role="owner"))
     session.commit()
     return _board_out(board, include_invite=True)
 
@@ -99,14 +99,7 @@ def join_board(
     if body.invite_code != board.invite_code:
         raise HTTPException(status_code=403, detail="Bad invite code")
     if _membership(session, board.id, user.id) is None:
-        session.add(
-            BoardMember(
-                board_id=board.id,
-                user_id=user.id,
-                alias=body.alias or user.display_name,
-                role="member",
-            )
-        )
+        session.add(BoardMember(board_id=board.id, user_id=user.id, role="member"))
         session.commit()
     return _board_out(board, include_invite=False)
 

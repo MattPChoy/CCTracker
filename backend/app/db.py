@@ -49,7 +49,6 @@ class User(Base):
 
     id: Mapped[str] = mapped_column(String, primary_key=True, default=_uuid)
     handle: Mapped[str] = mapped_column(String, unique=True, index=True)
-    display_name: Mapped[str | None] = mapped_column(String, nullable=True)
     email: Mapped[str | None] = mapped_column(String, nullable=True)
     created_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), default=_now)
 
@@ -96,7 +95,6 @@ class BoardMember(Base):
     id: Mapped[str] = mapped_column(String, primary_key=True, default=_uuid)
     board_id: Mapped[str] = mapped_column(ForeignKey("boards.id"), index=True)
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
-    alias: Mapped[str | None] = mapped_column(String, nullable=True)
     role: Mapped[str] = mapped_column(String, default="member")  # owner | admin | member
     # Per-member cost visibility override. NULL means "inherit board.show_cost".
     share_cost: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
