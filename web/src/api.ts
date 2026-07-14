@@ -91,4 +91,13 @@ export const api = {
     if (window) q.set("window", window);
     return req<Leaderboard>("GET", `/v1/public/leaderboard?${q}`);
   },
+  userDaily: (handle: string, days?: number) => {
+    const q = new URLSearchParams();
+    if (days) q.set("days", String(days));
+    const cleanHandle = handle.replace(/^@/, "");
+    return req<{ handle: string; days: { date: string; total_tokens: number; cost_usd: number }[] }>(
+      "GET",
+      `/v1/public/users/${cleanHandle}/daily?${q}`
+    );
+  },
 };
