@@ -1,0 +1,55 @@
+# CCTracker — Claude Code usage leaderboard. Standalone stack.
+#
+#   docker compose up -d --build     # postgres + app + cloudflared
+#
+# The app image is multi-stage: it builds the Vue frontend (node) and serves it
+# plus the FastAPI API from one container on :8080. cloudflared dials Cloudflare
+# with a remotely-managed tunnel token; map the public hostname
+# cctracker.mattpchoy.com -> http://app:8080 in the Zero Trust dashboard.
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-cctracker}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cctracker}
+      POSTGRES_DB: ${POSTGRES_DB:-cctracker}
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-cctracker} -d ${POSTGRES_DB:-cctracker}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    networks:
+      - cctracker-net
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-cctracker}:${POSTGRES_PASSWORD:-cctracker}@postgres:5432/${POSTGRES_DB:-cctracker}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      # Bound to host loopback for local testing; public access is via the tunnel.
+      - "127.0.0.1:8080:8080"
+    networks:
+      - cctracker-net
+    restart: unless-stopped
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+    networks:
+      - cctracker-net
+    restart: unless-stopped
+
+networks:
+  cctracker-net:
+    driver: bridge
