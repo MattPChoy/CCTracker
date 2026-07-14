@@ -17,30 +17,25 @@ from fastapi.responses import FileResponse, PlainTextResponse
 router = APIRouter(tags=["install"])
 
 _SKILL_DIR = Path(os.environ.get("CCTRACKER_SKILL_DIR", "/app/skill"))
-
-# GitHub repo that hosts INSTALL.md (the cross-platform, OS-deciding guide).
-_INSTALL_GUIDE_URL = "https://raw.githubusercontent.com/MattPChoy/CCTracker/main/INSTALL.md"
-
-
-def _install_prompt(origin: str, token: str) -> str:
-    return (
-        f"Download the CCTracker install guide from\n{_INSTALL_GUIDE_URL}\n"
-        f'and follow it to install the "update-leaderboard" Claude Code skill for my OS.\n\n'
-        f"Use these values:\n"
-        f"  api_base = {origin}\n"
-        f"  token = {token}\n\n"
-        f"When it's done, run /update-leaderboard to confirm my usage pushed.\n"
-    )
+# The cross-platform, OS-deciding install guide (INSTALL.md), served from the
+# origin so the whole flow stays on the deployment's own domain.
+_INSTALL_GUIDE = Path(os.environ.get("CCTRACKER_INSTALL_GUIDE", "/app/INSTALL.md"))
 
 
 @router.get("/install")
-def install_prompt(request: Request, token: str = "<your token>") -> PlainTextResponse:
-    """The plaintext Claude Code install prompt. Paste it into Claude Code.
+def install_guide(request: Request, token: str = "<token>") -> PlainTextResponse:
+    """The install guide, with `<api_base>` filled in from the request origin.
 
-    `?token=` fills in the secret; otherwise a placeholder is shown.
+    Paste `<origin>/install` into Claude Code (or open it) and follow it.
+    `?token=` also fills in `<token>`; otherwise the placeholder is left in place.
     """
+    if not _INSTALL_GUIDE.is_file():
+        raise HTTPException(status_code=404, detail="install guide not available")
     origin = str(request.base_url).rstrip("/")
-    return PlainTextResponse(_install_prompt(origin, token))
+    body = _INSTALL_GUIDE.read_text().replace("<api_base>", origin)
+    if token != "<token>":
+        body = body.replace("<token>", token)
+    return PlainTextResponse(body, media_type="text/markdown")
 
 
 def _render_installer(name: str, request: Request, media_type: str) -> PlainTextResponse:

@@ -12,7 +12,8 @@ can read it and perform the install for you** on any operating system.
 | `api_base` | The CCTracker origin, e.g. `https://cctracker.mattpchoy.com` or `http://localhost:8080`. |
 | `token` | Your personal secret, revealed by the **Get started** button on the site. Treat it like a password. |
 
-Throughout this guide, replace `<api_base>` and `<token>` with those values.
+Throughout this guide, `<api_base>` is your CCTracker origin and `<token>` is
+your personal secret — substitute your own values.
 
 ## What gets installed
 

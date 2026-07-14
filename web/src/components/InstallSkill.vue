@@ -8,9 +8,8 @@ const apiBase = window.location.origin;
 const tokenText = computed(() => props.token || "<your token>");
 
 const prompt = computed(
-  () => `Download the CCTracker install guide from
-https://raw.githubusercontent.com/MattPChoy/CCTracker/main/INSTALL.md
-and follow it to install the "update-leaderboard" Claude Code skill for my OS.
+  () => `Download the CCTracker install guide from ${apiBase}/install and follow the
+instructions to install the "update-leaderboard" Claude Code skill for my OS.
 
 Use these values:
   api_base = ${apiBase}
@@ -44,7 +43,7 @@ async function copyPrompt() {
       <button class="ghost" @click="copyPrompt">{{ copied ? "Copied ✓" : "Copy prompt" }}</button>
     </div>
     <p class="muted" style="font-size:12.5px;margin:6px 0 0">
-      Also available as plain text at
+      Full install guide:
       <a :href="`${apiBase}/install`" target="_blank">{{ apiBase }}/install</a>.
     </p>
 

@@ -20,9 +20,12 @@ COPY backend/app ./app
 COPY --from=web /web/dist ./static
 # Installers + skill assets, served by the install router.
 COPY skill ./skill
+# The install guide, served (with the origin filled in) at /install.
+COPY INSTALL.md ./INSTALL.md
 
 ENV CCTRACKER_STATIC_DIR=/app/static
 ENV CCTRACKER_SKILL_DIR=/app/skill
+ENV CCTRACKER_INSTALL_GUIDE=/app/INSTALL.md
 EXPOSE 8080
 # --proxy-headers so request.base_url reflects the public https origin behind
 # the Cloudflare tunnel (used to bake the default api_base into installers).
