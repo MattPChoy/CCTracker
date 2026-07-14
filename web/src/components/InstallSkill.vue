@@ -57,21 +57,6 @@ async function copy(what: string, text: string) {
       The token is your own key for this leaderboard.
     </p>
 
-    <details style="margin-top:12px">
-      <summary>Prefer to have Claude Code run it?</summary>
-      <p class="muted" style="font-size:13px">
-        Paste this — it's a concrete command it can inspect, not remote instructions to follow blindly.
-      </p>
-      <div class="cmd">
-        <pre>Run this exact command in my terminal to install the CCTracker "update-leaderboard" skill (you can inspect it first at {{ apiBase }}/install.{{ os === "win" ? "ps1" : "sh" }}). It only writes ~/.cc-leaderboard/config.json and ~/.claude/skills/update-leaderboard/:
-
-{{ command }}</pre>
-        <button class="ghost" @click="copy('cc', `Run this exact command in my terminal to install the CCTracker “update-leaderboard” skill (you can inspect it first at ${apiBase}/install.${os === 'win' ? 'ps1' : 'sh'}). It only writes ~/.cc-leaderboard/config.json and ~/.claude/skills/update-leaderboard/:\n\n${command}`)">
-          {{ copied === "cc" ? "Copied ✓" : "Copy" }}
-        </button>
-      </div>
-    </details>
-
     <details v-if="token" style="margin-top:8px">
       <summary>Reveal raw token</summary>
       <p class="muted" style="font-size:13px">
