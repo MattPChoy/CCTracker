@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# cc-leaderboard-push — push Claude Code usage to a CCTracker backend.
+# update-leaderboard — push Claude Code usage to a CCTracker backend.
 #
 # Reads config from ~/.cc-leaderboard/config.json (or CCLB_API_BASE / CCLB_TOKEN
 # env vars), runs `ccusage daily --breakdown --json` over a trailing window,
@@ -30,7 +30,7 @@ fi
 if command -v gdate >/dev/null 2>&1; then DATE=gdate; else DATE=date; fi
 since="$(${DATE} -d "-${TRAILING_DAYS} days" +%Y%m%d 2>/dev/null || ${DATE} -v-"${TRAILING_DAYS}"d +%Y%m%d)"
 
-echo "cc-leaderboard-push: since=${since} -> ${api_base}"
+echo "update-leaderboard: since=${since} -> ${api_base}"
 
 # --- collect usage --------------------------------------------------------
 raw="$(ccusage daily --breakdown --json --since "${since}" 2>/dev/null || npx -y ccusage@latest daily --breakdown --json --since "${since}")"
