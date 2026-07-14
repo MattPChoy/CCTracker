@@ -10,6 +10,25 @@ cost — to a CCTracker backend so it appears on any leaderboard you've joined.
 It reads only `ccusage`'s aggregate numbers: never project names, file paths, or
 prompt content.
 
+## Install this skill (paste into Claude Code)
+
+Don't have the skill yet? Paste this prompt into Claude Code and it will fetch
+and install it from GitHub:
+
+```text
+Install the CCTracker usage-push skill from https://github.com/MattPChoy/CCTracker.
+
+1. Download these two files:
+   - https://raw.githubusercontent.com/MattPChoy/CCTracker/main/skill/SKILL.md
+   - https://raw.githubusercontent.com/MattPChoy/CCTracker/main/skill/push.sh
+2. Save them to ~/.claude/skills/cc-leaderboard-push/ (create the dir) and
+   chmod +x the push.sh.
+3. Create ~/.cc-leaderboard/config.json (chmod 600) with:
+   { "api_base": "https://cctracker.mattpchoy.com", "token": "<my token>" }
+   Ask me for my token — I'll get it by registering at the api_base.
+4. Confirm `ccusage`, `jq`, and `curl` are available, then run push.sh once.
+```
+
 ## One-time config
 
 Create `~/.cc-leaderboard/config.json`:
