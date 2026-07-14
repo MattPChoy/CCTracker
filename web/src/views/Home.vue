@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { api, getToken, setToken } from "../api";
+import InstallSkill from "../components/InstallSkill.vue";
 
 const router = useRouter();
 const handle = ref("");
@@ -11,6 +12,7 @@ const newToken = ref<string | null>(null);
 const err = ref("");
 const busy = ref(false);
 const alreadyIn = ref(!!getToken());
+const storedToken = getToken();
 
 async function register() {
   err.value = "";
@@ -38,11 +40,14 @@ function continueIn() {
 </script>
 
 <template>
-  <div v-if="alreadyIn" class="card">
-    <h1>You're signed in</h1>
-    <p class="muted">Head to your boards to see rankings.</p>
-    <button @click="continueIn">Go to boards →</button>
-  </div>
+  <template v-if="alreadyIn">
+    <div class="card">
+      <h1>You're signed in</h1>
+      <p class="muted">Head to your boards to see rankings.</p>
+      <button @click="continueIn">Go to boards →</button>
+    </div>
+    <InstallSkill :token="storedToken" />
+  </template>
 
   <template v-else>
     <div class="card">
@@ -81,5 +86,7 @@ function continueIn() {
         <button class="ghost" :disabled="!existingToken" @click="useExistingToken">Sign in</button>
       </div>
     </div>
+
+    <InstallSkill :token="newToken" />
   </template>
 </template>

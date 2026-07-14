@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { api, type Membership } from "../api";
+import { api, getToken, type Membership } from "../api";
+import InstallSkill from "../components/InstallSkill.vue";
 
 const router = useRouter();
+const storedToken = getToken();
 const memberships = ref<Membership[]>([]);
 const handle = ref("");
 const err = ref("");
@@ -82,4 +84,6 @@ onMounted(load);
       <button class="ghost" :disabled="!joinId || !joinCode" @click="join">Join</button>
     </div>
   </div>
+
+  <InstallSkill :token="storedToken" />
 </template>
