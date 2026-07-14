@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { Entry } from "../api";
+import ModelMixPie from "./ModelMixPie.vue";
+import ContributionHeatmap from "./ContributionHeatmap.vue";
 
 defineProps<{ entries: Entry[]; metric: string }>();
 
@@ -31,6 +33,7 @@ function unit(m: string): string {
       <div class="who-col">
         <div class="name">{{ e.handle }}</div>
       </div>
+      <ModelMixPie v-if="e.per_model.length" :per-model="e.per_model" :size="40" :legend="false" />
       <div class="value">
         {{ fmt(e.value, metric) }}<span class="unit">{{ unit(metric) }}</span>
       </div>
@@ -50,6 +53,7 @@ function unit(m: string): string {
           {{ pm.label }} {{ (pm.share * 100).toFixed(0) }}%<template v-if="pm.cost_usd != null"> · ${{ pm.cost_usd.toFixed(2) }}</template>
         </span>
       </div>
+      <ContributionHeatmap :handle="e.handle" style="margin-top:10px" />
     </div>
   </div>
 </template>
