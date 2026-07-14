@@ -9,28 +9,20 @@ aggregate daily/per-model usage to this backend. They create and join
 Usage is stored **once per user, globally**; a board is just a filtered view, so
 one push updates every board you're on.
 
-## Install the push skill (join a leaderboard)
+## Join a leaderboard (one command)
 
-**Easiest:** paste this prompt into Claude Code and let it do the install for you:
+Hit **Get started** at `https://cctracker.mattpchoy.com` — no signup form, you're
+signed in instantly with an auto-assigned name (changeable later). It then shows
+a single command with your token already in it that installs the
+`/update-leaderboard` skill and pushes your usage:
 
-```text
-Install the CCTracker usage-push skill from https://github.com/MattPChoy/CCTracker.
+- **macOS / Linux:**
+  `curl -fsSL https://cctracker.mattpchoy.com/install.sh | CCLB_API_BASE=https://cctracker.mattpchoy.com CCLB_TOKEN=<token> bash`
+- **Windows (PowerShell):**
+  `$env:CCLB_API_BASE='https://cctracker.mattpchoy.com'; $env:CCLB_TOKEN='<token>'; irm https://cctracker.mattpchoy.com/install.ps1 | iex`
 
-1. Download the two files in the repo's skill/ folder:
-   - https://raw.githubusercontent.com/MattPChoy/CCTracker/main/skill/SKILL.md
-   - https://raw.githubusercontent.com/MattPChoy/CCTracker/main/skill/push.sh
-2. Save them to ~/.claude/skills/cc-leaderboard-push/ (create the dir) and
-   chmod +x the push.sh.
-3. Create ~/.cc-leaderboard/config.json with:
-   { "api_base": "https://cctracker.mattpchoy.com", "token": "<my token>" }
-   Ask me for my token (I'll get it by registering at the api_base). Make the
-   file chmod 600 since the token is a secret.
-4. Check that `ccusage`, `jq`, and `curl` are available (ccusage falls back to
-   `npx -y ccusage@latest`), then run the skill once to push my usage.
-```
-
-Register at `https://cctracker.mattpchoy.com` first to get your token (shown
-once). Prefer to do it by hand? See [`skill/SKILL.md`](skill/SKILL.md).
+Prefer to let Claude Code detect your OS and install it? The site also gives a
+copy-paste Claude Code prompt. Details in [`skill/SKILL.md`](skill/SKILL.md).
 
 ## Stack
 
