@@ -25,6 +25,7 @@ from .routers.install import router as install_router
 from .routers.leaderboard import router as leaderboard_router
 from .routers.public import router as public_router
 from .routers.usage import router as usage_router
+from .routers.user_daily import router as user_daily_router
 from .routers.users import router as users_router
 
 logging.basicConfig(level=logging.INFO)
@@ -79,6 +80,7 @@ app.include_router(boards_router)
 app.include_router(usage_router)
 app.include_router(leaderboard_router)
 app.include_router(public_router)
+app.include_router(user_daily_router)
 app.include_router(install_router)
 
 
