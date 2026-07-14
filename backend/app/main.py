@@ -21,7 +21,9 @@ from fastapi.staticfiles import StaticFiles
 from . import db as dbm
 from .deps import set_engine
 from .routers.boards import router as boards_router
+from .routers.install import router as install_router
 from .routers.leaderboard import router as leaderboard_router
+from .routers.public import router as public_router
 from .routers.usage import router as usage_router
 from .routers.users import router as users_router
 
@@ -76,6 +78,8 @@ app.include_router(users_router)
 app.include_router(boards_router)
 app.include_router(usage_router)
 app.include_router(leaderboard_router)
+app.include_router(public_router)
+app.include_router(install_router)
 
 
 # --- SPA static serving (only when the built bundle is present) -----------

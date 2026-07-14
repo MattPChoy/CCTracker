@@ -18,7 +18,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/app ./app
 # Built SPA lands where main.py's CCTRACKER_STATIC_DIR points.
 COPY --from=web /web/dist ./static
+# Installers + skill assets, served by the install router.
+COPY skill ./skill
 
 ENV CCTRACKER_STATIC_DIR=/app/static
+ENV CCTRACKER_SKILL_DIR=/app/skill
 EXPOSE 8080
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# --proxy-headers so request.base_url reflects the public https origin behind
+# the Cloudflare tunnel (used to bake the default api_base into installers).
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--proxy-headers", "--forwarded-allow-ips=*"]
