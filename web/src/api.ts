@@ -31,11 +31,9 @@ export interface Membership {
   slug: string;
   name: string;
   role: string;
-  alias: string | null;
 }
 export interface Me {
   handle: string;
-  display_name: string | null;
   memberships: Membership[];
 }
 export interface PerModel {
@@ -49,7 +47,6 @@ export interface PerModel {
 export interface Entry {
   rank: number;
   handle: string;
-  alias: string | null;
   value: number;
   cost_usd: number | null;
   per_model: PerModel[];
@@ -65,24 +62,33 @@ export interface Board {
   show_cost: boolean;
 }
 export interface Leaderboard {
-  board: Board;
+  board: Board | null;
   metric: string;
   window: string;
   entries: Entry[];
 }
 
 export const api = {
-  register: (handle: string, display_name?: string) =>
-    req<{ handle: string; token: string; prefix: string }>("POST", "/v1/users", { handle, display_name }),
+  register: (handle?: string) =>
+    req<{ handle: string; token: string; prefix: string }>("POST", "/v1/users", {
+      handle: handle || undefined,
+    }),
   me: () => req<Me>("GET", "/v1/me"),
+  updateMe: (body: { handle: string }) => req<Me>("PATCH", "/v1/me", body),
   createBoard: (name: string) => req<Board>("POST", "/v1/boards", { name }),
   getBoard: (id: string) => req<Board>("GET", `/v1/boards/${id}`),
-  joinBoard: (id: string, invite_code: string, alias?: string) =>
-    req<Board>("POST", `/v1/boards/${id}/join`, { invite_code, alias }),
+  joinBoard: (id: string, invite_code: string) =>
+    req<Board>("POST", `/v1/boards/${id}/join`, { invite_code }),
   leaderboard: (id: string, metric?: string, window?: string) => {
     const q = new URLSearchParams();
     if (metric) q.set("metric", metric);
     if (window) q.set("window", window);
     return req<Leaderboard>("GET", `/v1/boards/${id}/leaderboard?${q}`);
+  },
+  publicLeaderboard: (metric?: string, window?: string) => {
+    const q = new URLSearchParams();
+    if (metric) q.set("metric", metric);
+    if (window) q.set("window", window);
+    return req<Leaderboard>("GET", `/v1/public/leaderboard?${q}`);
   },
 };

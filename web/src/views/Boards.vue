@@ -9,6 +9,9 @@ const storedToken = getToken();
 const memberships = ref<Membership[]>([]);
 const handle = ref("");
 const err = ref("");
+const editingName = ref(false);
+const editHandle = ref("");
+const savingName = ref(false);
 const newBoardName = ref("");
 const joinId = ref("");
 const joinCode = ref("");
@@ -24,6 +27,25 @@ async function load() {
     if (e.message.includes("401") || e.message.toLowerCase().includes("token")) {
       router.push("/");
     }
+  }
+}
+
+function startEditName() {
+  editHandle.value = handle.value;
+  editingName.value = true;
+}
+
+async function saveName() {
+  err.value = "";
+  savingName.value = true;
+  try {
+    await api.updateMe({ handle: editHandle.value.trim() });
+    editingName.value = false;
+    await load();
+  } catch (e: any) {
+    err.value = e.message;
+  } finally {
+    savingName.value = false;
   }
 }
 
@@ -54,7 +76,20 @@ onMounted(load);
 <template>
   <div class="card">
     <h1>Your boards</h1>
-    <p class="muted">Signed in as @{{ handle }}</p>
+    <div v-if="!editingName" class="row" style="gap:8px">
+      <p class="muted" style="margin:0">Signed in as @{{ handle }}</p>
+      <button class="ghost" style="padding:2px 8px;font-size:12px" @click="startEditName">Change handle</button>
+    </div>
+    <div v-else style="margin:8px 0">
+      <div class="row">
+        <input v-model="editHandle" placeholder="handle" />
+        <button :disabled="savingName || !editHandle.trim()" @click="saveName">Save</button>
+        <button class="ghost" @click="editingName = false">Cancel</button>
+      </div>
+      <p class="muted" style="font-size:12px;margin:6px 0 0">
+        Your handle is your public @name on every board.
+      </p>
+    </div>
     <p v-if="err" class="err">{{ err }}</p>
     <div v-if="memberships.length === 0" class="muted">
       You're not on any boards yet. Create one or join with an invite code.

@@ -5,22 +5,22 @@ import { computed, ref } from "vue";
 const props = defineProps<{ token?: string | null }>();
 
 const apiBase = window.location.origin;
-const tokenText = computed(() => props.token || "<my token>");
+const tokenText = computed(() => props.token || "<your token>");
 
 const prompt = computed(
-  () => `Install the CCTracker usage-push skill from https://github.com/MattPChoy/CCTracker.
+  () => `Download the CCTracker install guide from
+https://raw.githubusercontent.com/MattPChoy/CCTracker/main/INSTALL.md
+and follow it to install the "update-leaderboard" Claude Code skill for my OS.
 
-1. Download these two files:
-   - https://raw.githubusercontent.com/MattPChoy/CCTracker/main/skill/SKILL.md
-   - https://raw.githubusercontent.com/MattPChoy/CCTracker/main/skill/push.sh
-2. Save them to ~/.claude/skills/cc-leaderboard-push/ (create the dir) and chmod +x the push.sh.
-3. Create ~/.cc-leaderboard/config.json (chmod 600) with:
-   { "api_base": "${apiBase}", "token": "${tokenText.value}" }
-4. Confirm ccusage, jq, and curl are available, then run push.sh once to push my usage.`,
+Use these values:
+  api_base = ${apiBase}
+  token = ${tokenText.value}
+
+When it's done, run /update-leaderboard to confirm my usage pushed.`,
 );
 
 const copied = ref(false);
-async function copy() {
+async function copyPrompt() {
   try {
     await navigator.clipboard.writeText(prompt.value);
     copied.value = true;
@@ -33,33 +33,42 @@ async function copy() {
 
 <template>
   <div class="card">
-    <div class="row" style="justify-content:space-between">
-      <h2 style="margin:0">Install the push skill</h2>
-      <button class="ghost" @click="copy">{{ copied ? "Copied ✓" : "Copy prompt" }}</button>
-    </div>
-    <p class="muted">
-      Paste this into <strong>Claude Code</strong> and it will download and install the
-      skill from GitHub, then push your usage.
+    <h2 style="margin:0">Install the skill</h2>
+    <p class="muted" style="margin:4px 0 12px">
+      Paste this prompt into Claude Code. It reads the install guide and sets up the
+      <code>/update-leaderboard</code> skill for your OS.
     </p>
-    <pre class="prompt">{{ prompt }}</pre>
-    <p v-if="!token" class="muted" style="font-size:13px">
-      Register above to get your token — it drops straight into this prompt.
+
+    <div class="cmd">
+      <pre>{{ prompt }}</pre>
+      <button class="ghost" @click="copyPrompt">{{ copied ? "Copied ✓" : "Copy prompt" }}</button>
+    </div>
+    <p class="muted" style="font-size:12.5px;margin:6px 0 0">
+      Also available as plain text at
+      <a :href="`${apiBase}/install`" target="_blank">{{ apiBase }}/install</a>.
+    </p>
+
+    <details v-if="token" style="margin-top:12px">
+      <summary>Reveal raw token</summary>
+      <p class="muted" style="font-size:13px">
+        For manual setup. Treat it like a password — it's your only credential.
+      </p>
+      <div class="token-box">{{ token }}</div>
+    </details>
+
+    <p v-if="!token" class="muted" style="font-size:13px;margin-top:12px">
+      Click <strong>Get started</strong> above to fill this prompt in with your token.
     </p>
   </div>
 </template>
 
 <style scoped>
-.prompt {
-  background: #000;
-  color: #cfd3dc;
-  border-radius: 8px;
-  padding: 14px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 12.5px;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow-x: auto;
-  margin: 8px 0 4px;
+.cmd { position: relative; margin-top: 10px; }
+.cmd pre {
+  background: #000; color: #cfd3dc; border-radius: 8px; padding: 14px 130px 14px 14px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px;
+  line-height: 1.5; white-space: pre-wrap; word-break: break-word; overflow-x: auto; margin: 0;
 }
+.cmd button { position: absolute; top: 8px; right: 8px; padding: 5px 10px; font-size: 12px; }
+details summary { cursor: pointer; color: var(--accent); font-size: 14px; }
 </style>
