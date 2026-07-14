@@ -53,7 +53,7 @@ foreach ($d in $data.daily) {
             costUSD             = [double]($m.cost ?? $m.costUSD ?? 0)
         }
     }
-    $days += [ordered]@{ date = $d.date; models = $models }
+    $days += [ordered]@{ date = if ($d.date) { $d.date } else { $d.period }; models = $models }
 }
 $payload = [ordered]@{ source = "ccusage"; days = $days } | ConvertTo-Json -Depth 8
 

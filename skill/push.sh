@@ -41,7 +41,7 @@ raw="$(ccusage daily --breakdown --json --since "${since}" 2>/dev/null || npx -y
 payload="$(printf '%s' "${raw}" | jq -c '{
   source: "ccusage",
   days: [ .daily[] | {
-    date: .date,
+    date: (.date // .period),
     models: [ (.modelBreakdowns // .breakdown // [])[] | {
       model: (.modelName // .model),
       inputTokens: (.inputTokens // 0),
