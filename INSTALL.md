@@ -2,8 +2,12 @@
 
 This guide installs the **`/update-leaderboard`** Claude Code skill. The skill
 runs [`ccusage`](https://github.com/ryoppippi/ccusage) and pushes your Claude
-Code usage stats to your CCTracker leaderboard. It is written so **Claude Code
-can read it and perform the install for you** on any operating system.
+Code usage stats to your CCTracker leaderboard.
+
+It's a normal, inspectable installer that **you run in your own terminal** — it
+only writes a config file and a skill folder (both listed below), and the
+`install.sh` / `install.ps1` scripts are served in plain text so you can read
+them before running. The `token` is your own key for your own leaderboard.
 
 ## Inputs you need
 
