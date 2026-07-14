@@ -40,6 +40,7 @@ done
 command -v ccusage >/dev/null 2>&1 || echo "note: 'ccusage' not found — will use 'npx -y ccusage@latest'" >&2
 
 echo "CCTracker: pushing your usage for the first time…"
-"${SKILL_DIR}/push.sh" || echo "warn: first push failed — run /update-leaderboard in Claude Code to retry" >&2
+CCLB_TRAILING_DAYS="${CCLB_TRAILING_DAYS:-10}" "${SKILL_DIR}/push.sh" \
+  || echo "warn: first push failed — run /update-leaderboard in Claude Code to retry" >&2
 
 echo "CCTracker: done. Invoke /update-leaderboard in Claude Code anytime to update."

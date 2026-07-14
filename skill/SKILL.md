@@ -25,7 +25,8 @@ you a single copy-paste command with your token already in it:
 
 `<api_base>` defaults to `https://cctracker.mattpchoy.com`. The installer writes
 the config, downloads this skill into `~/.claude/skills/update-leaderboard/`, and
-runs a first push.
+runs a first push covering the last 10 days (so recent history lands on the
+leaderboard right away, not just today).
 
 ### Or let Claude Code install it (any OS)
 
@@ -60,9 +61,10 @@ Get the token from the "Get started" button on the CCTracker site.
 
 ## Manual push
 
-Run the bundled script for your OS — it reads a trailing window (default 3 days)
-so same-day growth and late writes get corrected, and records a watermark so
-re-runs are safe:
+Run the bundled script for your OS — it reads a trailing window (default 3 days,
+10 days on the installer's first run) so same-day growth and late writes get
+corrected, and records a watermark so re-runs are safe. Override with
+`CCLB_TRAILING_DAYS=<n>` for a one-off deeper backfill:
 
 ```sh
 ./push.sh          # macOS / Linux

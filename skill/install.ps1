@@ -36,10 +36,14 @@ if (-not (Get-Command ccusage -ErrorAction SilentlyContinue)) {
 }
 
 Write-Host "CCTracker: pushing your usage for the first time…"
+$setTrailingDays = -not $env:CCLB_TRAILING_DAYS
+if ($setTrailingDays) { $env:CCLB_TRAILING_DAYS = "10" }
 try {
     & (Join-Path $SkillDir "push.ps1")
 } catch {
     Write-Warning "first push failed — run /update-leaderboard in Claude Code to retry"
+} finally {
+    if ($setTrailingDays) { Remove-Item Env:\CCLB_TRAILING_DAYS -ErrorAction SilentlyContinue }
 }
 
 Write-Host "CCTracker: done. Invoke /update-leaderboard in Claude Code anytime to update."
